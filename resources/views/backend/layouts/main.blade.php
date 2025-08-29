@@ -4,9 +4,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Panel - @yield('title')</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('backend/assets/images/logos/favicon.png') }}" />
     <link rel="stylesheet" href="{{ asset('backend/assets/css/styles.min.css') }}" />
+
+    {{-- cdn css datatable --}}
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css"> --}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.3/css/dataTables.bootstrap5.css">
 
     @stack('css')
 </head>
@@ -20,7 +25,7 @@
         <!--  Sidebar End -->
 
         <!--  Main wrapper -->
-        <div class="body-wrapper">
+        <div class="body-wrapper d-flex flex-column min-vh-100">
             <!--  Header Start -->
             @include('backend.partials.header')
             <!--  Header End -->
@@ -29,11 +34,12 @@
                 {{-- Content Start --}}
                 @yield('content')
                 {{-- Content End --}}
-
-                {{-- Footer --}}
-                @include('backend.partials.footer')
-                {{-- Footer End --}}
             </div>
+
+            <!-- Footer -->
+            <footer class="mt-auto mb-2">
+                @include('backend.partials.footer')
+            </footer>
         </div>
     </div>
     <script src="{{ asset('backend/assets/libs/jquery/dist/jquery.min.js') }}"></script>
@@ -43,6 +49,12 @@
     <script src="{{ asset('backend/assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
     <script src="{{ asset('backend/assets/libs/simplebar/dist/simplebar.js') }}"></script>
     <script src="{{ asset('backend/assets/js/dashboard.js') }}"></script>
+
+    {{-- cdn js datatable --}}
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.bootstrap5.js"></script>
 
     @stack('js')
 </body>
