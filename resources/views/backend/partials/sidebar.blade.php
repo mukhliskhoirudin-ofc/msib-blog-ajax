@@ -33,23 +33,23 @@
                         <span>
                             <i class="ti ti-article"></i>
                         </span>
-                        <span class="hide-menu">Buttons</span>
+                        <span class="hide-menu">Articles</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="./ui-alerts.html" aria-expanded="false">
+                <li class="sidebar-item {{ request()->is('panel/categories*') ? 'active' : '' }}">
+                    <a class="sidebar-link" href="{{ route('panel.categories.index') }}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-alert-circle"></i>
+                            <i class="ti ti-category"></i>
                         </span>
-                        <span class="hide-menu">Alerts</span>
+                        <span class="hide-menu">Categories</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="./ui-card.html" aria-expanded="false">
                         <span>
-                            <i class="ti ti-cards"></i>
+                            <i class="ti ti-tag"></i>
                         </span>
-                        <span class="hide-menu">Card</span>
+                        <span class="hide-menu">Tags</span>
                     </a>
                 </li>
             </ul>
