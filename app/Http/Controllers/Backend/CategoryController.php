@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\Backend\CategoryService;
+use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class CategoryController extends Controller
@@ -62,9 +63,21 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
-        //
+        try {
+            sleep(1);
+
+            $category->delete();
+
+            return response()->json([
+                'message' => 'Category deleted successfully!'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed to delete category!'
+            ], 500);
+        }
     }
 
     /**
