@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use App\Services\Backend\CategoryService;
 use Exception;
 use Yajra\DataTables\Facades\DataTables;
@@ -31,9 +32,25 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        try {
+            sleep(1);
+
+            Category::create($validated);
+
+            return response()->json([
+                'message' => 'Category created successfully!',
+                'data' => $validated
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed to create category!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -86,7 +103,7 @@ class CategoryController extends Controller
     public function serverside()
     {
         // $query = Category::query();
-        $query = Category::query()->select('id', 'uuid', 'name', 'slug');
+        $query = Category::query()->select('id', 'uuid', 'name', 'slug')->orderBy('id', 'desc');;
 
         return DataTables::eloquent($query)
             ->addIndexColumn()

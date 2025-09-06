@@ -58,3 +58,18 @@ const showLoading = (message) => {
 const closeLoading = () => {
     Swal.close();
 };
+
+// helper untuk hapus validasi
+const resetValidation = () => {
+    $('.is-invalid').removeClass('is-invalid');
+    $('.is-valid').removeClass('is-valid');
+    $('.invalid-feedback').remove();
+    $('.valid-feedback').remove();
+}
+
+// Global js validation agar langsung keluar validasinya
+$.validator.setDefaults({
+    onkeyup: function (element) {
+        $(element).valid();
+    }
+});

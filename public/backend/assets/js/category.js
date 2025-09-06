@@ -82,3 +82,45 @@ $(document).on('click', '.btn-delete', function (e) {
     });
 });
 // end sweetalert + ajax crud
+
+// modal create
+const modalCreate = () => {
+    $('#modal-create').modal('show');
+    $('.modal-title').html('<i class="ti ti-plus"></i> Create Category');
+    resetValidation();
+}
+
+// submit form create
+$('#form-category').on('submit', function (e) {
+    e.preventDefault();
+
+    let url = '/panel/categories';
+    let method = 'POST';
+
+    const inputForm = new FormData(this);
+
+    showLoading("Creating...");
+    $.ajax({
+        type: method,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        url: url,
+        data: inputForm,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function (response) {
+            closeLoading();
+            toastSuccess(response.message);
+            reloadDataTable('#category-table');
+            resetValidation();
+            $('#modal-create').modal('hide');
+            $('#form-category')[0].reset();
+            $('#form-category').validate().resetForm();
+        },
+        error: function (xhr) {
+            closeLoading();
+        }
+    });
+});
