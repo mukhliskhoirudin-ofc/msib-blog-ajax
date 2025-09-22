@@ -31,10 +31,81 @@ $(function () {
         ]
     });
 });
-//end datatable serverside
 
+// open modal create
+const modalCreate = () => {
+    $('#modal-create').modal('show');
+    $('.modal-title').html('<i class="ti ti-plus"></i> Create Category');
+    $('#form-category')[0].reset();
+    $('#form-category').removeData('id'); // hapus id → mode create
+    resetValidation();
+}
 
-// CRUD Delete (SweetAlert + AJAX)
+// open modal edit
+$(document).on('click', '.btn-edit', function (e) {
+    e.preventDefault();
+    let id = $(this).data('id'); // ambil dari data-id yang di tambahkan di button
+
+    showLoading("Loading...");
+    $.ajax({
+        url: '/panel/categories/' + id + '/edit',
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            closeLoading();
+            $('#modal-create').modal('show');
+            $('.modal-title').html('<i class="ti ti-pencil"></i> Edit Category');
+
+            $('#form-category input[name="name"]').val(response.data.name);
+            $('#form-category input[name="slug"]').val(response.data.slug);
+
+            $('#form-category').data('id', response.data.uuid); // simpan id → mode edit
+        },
+        error: function () {
+            closeLoading();
+            toastError("Failed to load data!");
+        }
+    });
+});
+
+// create / update submit
+$('#form-category').on('submit', function (e) {
+    e.preventDefault();
+
+    let id = $(this).data('id');
+    let url = id ? '/panel/categories/' + id : '/panel/categories';
+
+    const inputForm = new FormData(this);
+    if (id) {
+        inputForm.append('_method', 'PUT'); // spoof → update
+    }
+
+    showLoading(id ? "Updating..." : "Creating...");
+    $.ajax({
+        type: 'POST', // selalu POST, Laravel baca _method untuk update
+        url: url,
+        data: inputForm,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        success: function (response) {
+            closeLoading();
+            toastSuccess(response.message);
+            reloadDataTable('#category-table');
+            $('#modal-create').modal('hide');
+            $('#form-category')[0].reset();
+            $('#form-category').removeData('id'); // reset ke create mode
+            $('#form-category').validate().resetForm();
+        },
+        error: function (xhr) {
+            closeLoading();
+            toastError(xhr.responseJSON?.message ?? "Something went wrong!");
+        }
+    });
+});
+
+// delete
 $(document).on('click', '.btn-delete', function (e) {
     e.preventDefault();
     let id = $(this).data('id');
@@ -49,78 +120,25 @@ $(document).on('click', '.btn-delete', function (e) {
         confirmButtonText: "Yes, delete it!",
         cancelButtonText: "Cancel",
         reverseButtons: true,
-        allowOutsideClick: false,
-        showClass: {
-            popup: 'animate__animated animate__fadeInUp animate__faster'
-        },
-        hideClass: {
-            popup: 'animate__animated animate__fadeOutDown animate__faster'
-        }
+        allowOutsideClick: false
     }).then((result) => {
-        showLoading("Deleting..."); // tampilkan loading, dari helper.js
         if (result.isConfirmed) {
+            showLoading("Deleting...");
             $.ajax({
                 url: '/panel/categories/' + id,
                 type: 'DELETE',
                 dataType: 'json',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                // toast success dan error
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 success: function (response) {
-                    closeLoading(); // tutup loading
-                    toastSuccess(response.message); // panggil fungsi toastSuccess di helper.js
+                    closeLoading();
+                    toastSuccess(response.message);
                     reloadDataTable('#category-table');
                 },
                 error: function (xhr) {
                     closeLoading();
-                    toastError(xhr.responseJSON.message);
-                    reloadDataTable('#category-table');
+                    toastError(xhr.responseJSON?.message ?? "Delete failed!");
                 }
             });
-        }
-    });
-});
-// end sweetalert + ajax crud
-
-// modal create
-const modalCreate = () => {
-    $('#modal-create').modal('show');
-    $('.modal-title').html('<i class="ti ti-plus"></i> Create Category');
-    resetValidation();
-}
-
-// submit form create
-$('#form-category').on('submit', function (e) {
-    e.preventDefault();
-
-    let url = '/panel/categories';
-    let method = 'POST';
-
-    const inputForm = new FormData(this);
-
-    showLoading("Creating...");
-    $.ajax({
-        type: method,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        url: url,
-        data: inputForm,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function (response) {
-            closeLoading();
-            toastSuccess(response.message);
-            reloadDataTable('#category-table');
-            resetValidation();
-            $('#modal-create').modal('hide');
-            $('#form-category')[0].reset();
-            $('#form-category').validate().resetForm();
-        },
-        error: function (xhr) {
-            closeLoading();
         }
     });
 });

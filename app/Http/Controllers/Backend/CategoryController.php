@@ -64,17 +64,36 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Category $category)
     {
-        //
+        return response()->json([
+            'message' => 'Category loaded successfully!',
+            'data' => $category
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CategoryRequest $request, Category $category)
     {
-        //
+        $validated = $request->validated();
+
+        try {
+            sleep(1);
+
+            $category->update($validated);
+
+            return response()->json([
+                'message' => 'Category updated successfully!',
+                'data' => $category
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed to update category!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
