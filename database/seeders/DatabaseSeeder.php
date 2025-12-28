@@ -22,5 +22,9 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         Category::factory(1000)->create();
+
+        $this->call([
+            TagSeeder::class,
+        ]);
     }
 }

@@ -44,8 +44,8 @@
                         <span class="hide-menu">Categories</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="./ui-card.html" aria-expanded="false">
+                <li class="sidebar-item {{ request()->is('panel/tags*') ? 'active' : '' }}">
+                    <a class="sidebar-link" href="{{ route('panel.tags.index') }}" aria-expanded="false">
                         <span>
                             <i class="ti ti-tag"></i>
                         </span>
